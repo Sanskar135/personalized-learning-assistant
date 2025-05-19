@@ -4,3 +4,6 @@ python-multipart
 pydantic
 python-dotenv
 google-generativeai
+pymongo
+mongoengine
+PyJWT

@@ -5,6 +5,8 @@ from ..models.roadmap import ChatRequest, RoadmapResponse
 import json
 from typing import Dict
 from dotenv import load_dotenv
+from ..utils.addRoadmapData import insert_roadmap_to_db
+from ..models.user_model import User
 
 load_dotenv('.env')
 
@@ -36,7 +38,7 @@ def configure_gemini(api_key: str):
         )
     )
 
-def generate_roadmap(request: ChatRequest):
+def generate_roadmap(request: ChatRequest, current_user: User):
     api_key=os.getenv("GENAI_API_KEY")
     # print(f"API Key: {api_key}")
     model = configure_gemini(api_key)
@@ -86,7 +88,13 @@ def generate_roadmap(request: ChatRequest):
         json_text = response.text
         roadmap_dict = json.loads(json_text)
         roadmap = RoadmapResponse(**roadmap_dict)
+
+        insert_roadmap_to_db(current_user, roadmap,request.topic)
         return roadmap
+
+
+
+         
     except json.JSONDecodeError:
         raise ValueError("Failed to parse Gemini response as JSON")
     except ValidationError as e:

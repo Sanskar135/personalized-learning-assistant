@@ -1,6 +1,26 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes.roadmap import router as roadmap_router
+from app.models.user_model import User
+from mongoengine import connect
+# mongodb://localhost:27017/
+
+connect(
+        db='User',          # name of your MongoDB database
+        host='localhost',          # or your MongoDB URI
+        port=27017
+    )
+# dummy = User(
+#     firstname="John",
+#     lastname="Doe",
+#     email="m@gmail.com",
+#     password="password123",
+#     last_login_time=None,
+#     course_list=[]
+# )
+# dummy.save(timeout=False)
+
+
 
 app = FastAPI()
 
