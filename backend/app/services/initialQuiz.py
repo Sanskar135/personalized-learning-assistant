@@ -8,12 +8,14 @@ from dotenv import load_dotenv
 load_dotenv('.env')
 # Configure the API key (loaded from environment variable)
 genai.configure(api_key=os.getenv("GENAI_API_KEY"))
+
 def generate_quiz(topic: str, difficulty: int):
     """
     Generate a quiz with 10 questions based on the topic and difficulty level.
     Difficulty: 1 (basic), 2 (intermediate), 3 (advanced).
     """
     # Validate difficulty
+
     if difficulty not in [1, 2, 3]:
         raise HTTPException(status_code=400, detail="Difficulty must be 1, 2, or 3")
 
@@ -46,7 +48,7 @@ def generate_quiz(topic: str, difficulty: int):
             contents=f"Generate a 10-question quiz on {topic} at {difficulty_desc} difficulty level.",
             generation_config={"response_mime_type": "application/json", "response_schema": Quiz},
         )
-        print(response.text)
+        # print(response.text)
         # Parse the response
         # return response.text
         json_text = response.text
