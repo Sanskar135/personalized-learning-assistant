@@ -31,6 +31,7 @@ def configure_gemini(api_key: str):
             "Each subtopic should include a name, time estimate, and description of what to learn. "
             "Distribute the learning hours evenly across the specified weeks. "
             "Ensure the roadmap is tailored to the user's knowledge level and excludes any known subtopics. "
+            "Mention subtopics such that User should be able to get online reosurces of suntopics you mentioned"
             
         )
     )
@@ -43,17 +44,12 @@ def generate_roadmap(request: ChatRequest):
         if len(request.known_subtopics)==0:
             # print("No known subtopics provided.")
             prompt = (
-                f"Create a learning roadmap for {request.topic} tailored for a {request.knowledge_level} learner. "
-                f"The roadmap should span {request.weeks} weeks with a total of {request.hours} hours per week."
+                f"Create a learning roadmap for {request.topic} tailored for a {request.knowledge_level} learner (on a scale of 1–7). The roadmap should span {request.weeks} weeks, with {request.hours} hours per week (distributed evenly). For each week, list subtopics along with brief descriptions and time estimates. Make sure every subtopic is self-contained and focuses on material that can be studied through common video tutorials and written guides."
             )
         else:
             known_subtopics_str = ", ".join(request.known_subtopics)
             prompt = (
-                f"Create a learning roadmap for {request.topic} tailored for a {request.knowledge_level} learner. on a scale of 1-7 "
-                f"The roadmap should span {request.weeks} weeks with a total of {request.hours} hours per week. "
-                f"Distribute the hours evenly across weeks and provide subtopics with descriptions and time estimates. "
-                f"Ensure the roadmap is relevant to {request.topic} and suitable for the specified knowledge level. "
-                f"Exclude the following subtopics that the user already knows: {known_subtopics_str}."
+                      f"Create a learning roadmap for {request.topic} tailored for a {request.knowledge_level} learner (on a scale of 1–7). The roadmap should span {request.weeks} weeks, with {request.hours} hours per week (distributed evenly). For each week, list subtopics along with brief descriptions and time estimates. Make sure every subtopic is self-contained and focuses on material that can be studied through common video tutorials and written guides. Exclude the following subtopics that the user already knows: {known_subtopics_str}."
             )
         response = model.generate_content(
             contents=prompt,
