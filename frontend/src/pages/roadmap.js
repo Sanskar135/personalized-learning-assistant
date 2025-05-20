@@ -22,19 +22,6 @@ function Roadmap() {
     return;
   }
 
-  // Validate token format and decode payload
-  let userId;
-  try {
-    const payload = jwtDecode(token); // Decode token without secret key
-    userId = payload.sub; // Assuming 'sub' contains the user ID
-    console.log("User ID from token:", userId); // Debug user ID
-  } catch (error) {
-    console.error("Invalid token:", error.message);
-    localStorage.removeItem("token"); // Clear invalid token
-    navigate('/login');
-    return;
-  }
-
   // Retrieve and validate data from localStorage
   const topic = localStorage.getItem("selectedTopic");
   const knowledgeLevel = parseInt(localStorage.getItem("knowledgeLevel")) || 1;
@@ -154,7 +141,7 @@ const toggleDropdown = (index) => {
             className="card-header"
           >
             <span className="card-title">
-              Week {week.num}: {week.topic}
+             {week.topic}
             </span>
             <span className="toggle-icon">{expanded === index ? '▲' : '▼'}</span>
           </button>

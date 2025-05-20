@@ -60,7 +60,7 @@ def insert_roadmap_to_db(user_doc: User, roadmap: RoadmapResponse,course_name: s
     course.save()
 
     # 2. Update the user to include this course in their course_list
-    user_doc.course_list.append(str(course.id))
+    user_doc.courses.append(course.id)
     user_doc.save()
 
     # 3. Iterate over each Week in the roadmap and create Week/Subtopic entries

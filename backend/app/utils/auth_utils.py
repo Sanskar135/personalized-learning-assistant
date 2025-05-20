@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 from typing import Optional
 
 # Import your MongoEngine User Document
-from ..models.user_model import User
+from ..models.models import User
 
 def get_current_user(payload: Dict[str, Any] = Depends(verify_token)):
     
