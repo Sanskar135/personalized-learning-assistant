@@ -1,10 +1,15 @@
 import React from 'react';
+import Roadmap from './pages/roadmap';
+// router
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-      <h1>Frontend is running!</h1>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/roadmap" element={<Roadmap />} />
+      </Routes>
+    </Router>
   );
 }
 
