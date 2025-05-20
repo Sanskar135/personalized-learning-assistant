@@ -4,6 +4,7 @@ python-multipart
 pydantic
 python-dotenv
 google-generativeai
+pymongo
 mongoengine
 passlib[bcrypt] 
 pydantic[email]
