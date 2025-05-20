@@ -33,31 +33,26 @@ def view_links(request: ContentRequest, current_user: User):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-def generate_links(request: ContentRequest, current_user: User):
+def generate_links(course_name:str , week_name:str , subtopic_name:str):
     try:
-            # Get course, week and subtopic information
-            course = Course.objects.get(id=request.courseId)
-            week = Week.objects.get(id=request.weekId)
-            subtopic = Subtopic.objects.get(id=request.subtopicId)
-            subtopic_content = subtopic.content
             # Configure Gemini
             GEMINI_API_KEY = os.getenv("GENAI_API_KEY")
             TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
             genai.configure(api_key=GEMINI_API_KEY)
             model = genai.GenerativeModel("gemini-1.5-flash")
-
+            print(TAVILY_API_KEY)
             # Generate search query using Gemini
             search_prompt = f"""
             Create a specific search query to find educational video tutorials and articles about:
-            Course: {course.course_name}
-            Week Topic: {week.subtopic_list[0]}
-            Specific Subtopic: {subtopic.subTopic_name}
-            Description: {subtopic.subTopic_description}
+            Course: {course_name}
+            Week Topic: {week_name}
+            Specific Subtopic: {subtopic_name}
 
             Return only the search query text, nothing else.
             """
-            
+            print("h1")
             search_query = model.generate_content(search_prompt).text.strip()
+            print("h2")
             # print(search_query)
             # Use Tavily API
             headers = {"Authorization": f"Bearer {TAVILY_API_KEY}"}
@@ -66,13 +61,14 @@ def generate_links(request: ContentRequest, current_user: User):
                 "include_answers": True,
                 "search_depth": "advanced"
             }
-
+            print("h3")
             response = requests.post(
                 "https://api.tavily.com/search",
                 headers=headers,
                 json=payload
             )
             results = response.json().get("results", [])
+            print("h4")
             # Prepare two lists
             youtube_links = []
             article_links = []
@@ -92,7 +88,7 @@ def generate_links(request: ContentRequest, current_user: User):
                     # youtube_links.append(url)
                 else:
                     article_links.append(url)
-            
+            print("h5")
             YT_API_KEY = os.getenv("YOUTUBE_API_KEY")
             youtube_search_url = "https://www.googleapis.com/youtube/v3/search"
             params = {
@@ -102,17 +98,19 @@ def generate_links(request: ContentRequest, current_user: User):
                 "maxResults": 4,       # adjust as needed (max is 50 per request)
                 "key": YT_API_KEY
             }
-
+            print("h6")
+            print(YT_API_KEY)
             # 3) Call the YouTube Data API
             response = requests.get(youtube_search_url, params=params)
             if response.status_code != 200:
+                print("youtube api error", response.status_code, response.text)
                 raise HTTPException(
                     status_code=500,
                     detail=f"YouTube API error: {response.status_code} – {response.text}"
                 )
-
+            print("h7")
             data = response.json()
-
+            print("h8") 
             # 4) Parse out each video’s ID and build a full watch URL
             youtube_links = []
             for item in data.get("items", []):
@@ -120,10 +118,6 @@ def generate_links(request: ContentRequest, current_user: User):
                 if vid_id:
                     full_url = f"https://www.youtube.com/watch?v={vid_id}"
                     youtube_links.append(full_url)
-                    # Save into your Subtopic_content fields
-            subtopic_content.youtube_links = youtube_links
-            subtopic_content.article_links = article_links
-            subtopic_content.save()
 
             return {
                 "status": "success",

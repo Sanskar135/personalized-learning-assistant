@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './roadmap.css'; // Import the CSS file
+// ... previous imports
+import './roadmap.css';
 
 function Roadmap() {
   const [roadmap, setRoadmap] = useState([]);
@@ -10,112 +11,106 @@ function Roadmap() {
   const [subtopicContent, setSubtopicContent] = useState({});
   const [loadingSubtopic, setLoadingSubtopic] = useState(null);
   const [errorSubtopic, setErrorSubtopic] = useState(null);
+  const [visibleContent, setVisibleContent] = useState({});
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  
-  // Redirect to login if no token
-  if (!token) {
-    navigate('/login');
-    return;
-  }
-
-  // Retrieve and validate data from localStorage
-  const topic = localStorage.getItem("selectedTopic");
-  const knowledgeLevel = parseInt(localStorage.getItem("knowledgeLevel")) || 1;
-  const weeks = parseInt(localStorage.getItem("weeks")) || 4;
-  const hours = parseInt(localStorage.getItem("hours")) || 10;
-
-  // Validate request body
-  if (!topic) {
-    console.error("Missing topic in localStorage");
-    setError("Please select a topic");
-    setLoading(false);
-    return;
-  }
-
-  const requestBody = {
-    topic,
-    knowledge_level: knowledgeLevel,
-    weeks,
-    hours,
-    known_subtopics: [], // Populate if needed
-  };
-
-  // Make API request
-  axios
-    .post("http://127.0.0.1:8000/roadmap/generate", requestBody, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-    .then((response) => {
-      setRoadmap(response.data.response);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error("Failed to generate roadmap:", error.response?.data || error.message);
-      if (error.response?.status === 401 || error.response?.data?.detail === "User not found") {
-        localStorage.removeItem("token"); // Clear invalid token
-        navigate('/login');
-      } else {
-        setError(error.response?.data?.detail || "Failed to generate roadmap");
-      }
-      setLoading(false);
-    });
-}, [navigate]);
-
-const toggleDropdown = (index) => {
-  setExpanded((prev) => (prev === index ? null : index));
-  setSubtopicContent({});
-  setErrorSubtopic(null);
-  setLoadingSubtopic(null);
-};
-
-  const fetchSubtopicContent = (topicId, subtopicId) => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      navigate('/login');
+    if (!token) return navigate('/login');
+
+    const topic = localStorage.getItem("selectedTopic");
+    const knowledgeLevel = parseInt(localStorage.getItem("knowledgeLevel")) || 1;
+    const weeks = parseInt(localStorage.getItem("weeks")) || 4;
+    const hours = parseInt(localStorage.getItem("hours")) || 10;
+
+    if (!topic) {
+      setError("Please select a topic");
+      setLoading(false);
       return;
     }
 
-    setLoadingSubtopic(subtopicId);
-    setErrorSubtopic(null);
-
-    axios.get(`http://localhost:8000/roadmap/content/${topicId}/${subtopicId}`, {
+    axios.post("http://127.0.0.1:8000/roadmap/generate", {
+      topic,
+      knowledge_level: knowledgeLevel,
+      weeks,
+      hours,
+      known_subtopics: [],
+    }, {
       headers: {
-        Authorization: `Bearer ${token}` // Add the token to the request
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       }
     })
+      .then((res) => {
+        setRoadmap(res.data.response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        if (error.response?.status === 401 || error.response?.data?.detail === "User not found") {
+          localStorage.removeItem("token");
+          navigate('/login');
+        } else {
+          setError(error.response?.data?.detail || "Failed to generate roadmap");
+        }
+        setLoading(false);
+      });
+  }, [navigate]);
+
+  const toggleDropdown = (index) => {
+    setExpanded(prev => prev === index ? null : index);
+  };
+
+  const toggleContentVisibility = (subtopicId, week, subtopic) => {
+    setVisibleContent(prev => {
+      const isVisible = prev[subtopicId];
+      if (!isVisible && !subtopicContent[subtopicId]) {
+        fetchSubtopicContent(week, subtopic, subtopicId);
+      }
+      return { ...prev, [subtopicId]: !isVisible };
+    });
+  };
+
+  const fetchSubtopicContent = (week_name, subtopic_name, subtopic_id) => {
+    const token = localStorage.getItem("token");
+    const topic = localStorage.getItem("selectedTopic");
+
+    if (!token) return navigate('/login');
+
+    setLoadingSubtopic(subtopic_id);
+    setErrorSubtopic(null);
+
+    axios.post(
+      `http://localhost:8000/roadmap/generate/links?course_name=${topic}&week_name=${week_name}&subtopic_name=${subtopic_name}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      }
+    )
       .then(response => {
         setSubtopicContent(prev => ({
           ...prev,
-          [subtopicId]: response.data,
+          [subtopic_id]: response.data,
         }));
         setLoadingSubtopic(null);
       })
       .catch(error => {
-        console.error("Failed to fetch content:", error);
+        console.error("Fetch error:", error);
         if (error.response?.status === 401) {
           localStorage.removeItem("token");
           navigate('/login');
         } else {
-          setErrorSubtopic(subtopicId);
+          setErrorSubtopic(subtopic_id);
         }
         setLoadingSubtopic(null);
       });
   };
 
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <div className="loading-text">Generating your personalized roadmap...</div>
-      </div>
-    );
+    return <div className="loading-text">Generating your personalized roadmap...</div>;
   }
 
   if (error) {
@@ -136,45 +131,67 @@ const toggleDropdown = (index) => {
 
       {roadmap.map((week, index) => (
         <div key={index} className="roadmap-card">
-          <button
-            onClick={() => toggleDropdown(index)}
-            className="card-header"
-          >
-            <span className="card-title">
-             {week.topic}
-            </span>
+          <button onClick={() => toggleDropdown(index)} className="card-header">
+            <span className="card-title">{week.topic}</span>
             <span className="toggle-icon">{expanded === index ? '▲' : '▼'}</span>
           </button>
 
           {expanded === index && (
             <div className="card-body">
               {week.subtopics.map((sub, subIndex) => {
-                const subId = `${week.num}-${subIndex}`;
+                const subId = `${week.topic}-${subIndex}`;
                 const content = subtopicContent[subId];
 
                 return (
                   <div key={subIndex} className="subtopic-card">
-                    <h3 className="subtopic-title">{sub.subtopic}</h3>
-                    <p className="subtopic-time">⏱️ Estimated Time: {sub.time}</p>
-                    <p className="subtopic-desc">{sub.description}</p>
+                    <h3>{sub.subtopic}</h3>
+                    <p>⏱ {sub.time}</p>
+                    <p>{sub.description}</p>
 
                     <button
-                      onClick={() => fetchSubtopicContent(week.id || week.num, sub.id || subIndex)}
+                      onClick={() => toggleContentVisibility(subId, week.topic, sub.subtopic)}
                       className="view-content-btn"
                     >
-                      {loadingSubtopic === sub.id || loadingSubtopic === subIndex ? "Loading..." : "📘 View Content"}
+                      {loadingSubtopic === subId
+                        ? "Loading..."
+                        : visibleContent[subId]
+                          ? "🔽 Hide Content"
+                          : "📘 View Content"}
                     </button>
 
-                    {errorSubtopic === sub.id || errorSubtopic === subIndex ? (
-                      <p className="error-message">⚠️ Failed to load content.</p>
-                    ) : content && (
+                    {errorSubtopic === subId && (
+                      <p className="error-message">⚠ Failed to load content.</p>
+                    )}
+
+                    {visibleContent[subId] && content && (
                       <div className="subtopic-content">
-                        {content.text && <p>{content.text}</p>}
-                        {content.videoUrl && (
-                          <video controls className="subtopic-video">
-                            <source src={content.videoUrl} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
+                        {content.youtube_links?.length > 0 && (
+                          <>
+                            <h4>🎥 YouTube Videos</h4>
+                            <ul>
+                              {content.youtube_links.map((link, idx) => (
+                                <li key={idx}>
+                                  <a href={link} target="_blank" rel="noopener noreferrer">
+                                    Video {idx + 1}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                        {content.article_links?.length > 0 && (
+                          <>
+                            <h4>📰 Articles</h4>
+                            <ul>
+                              {content.article_links.map((link, idx) => (
+                                <li key={idx}>
+                                  <a href={link} target="_blank" rel="noopener noreferrer">
+                                    Article {idx + 1}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </>
                         )}
                       </div>
                     )}

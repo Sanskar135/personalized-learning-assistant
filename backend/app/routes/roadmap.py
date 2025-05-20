@@ -14,7 +14,7 @@ router = APIRouter(prefix="/roadmap", tags=["Roadmap"])
 async def chat(request: ChatRequest,current_user: User = Depends(get_current_user)):
     try:
         # print(current_user.email)	
-        print(request.topic)
+        # print(request.courseId)
         response = generate_roadmap(request,current_user)
         return response
     except Exception as e:
@@ -32,9 +32,9 @@ async def root():
     return {"message": "Gemini Chat API is running"}
 
 @router.post("/generate/links")
-async def generate_content(request: ContentRequest, current_user: User = Depends(get_current_user)):
-    return generate_links(request, current_user)
-
-@router.get("/view/links")
-async def get_links(request: ContentRequest, current_user: User = Depends(get_current_user)):
-    return view_links(request, current_user)
+async def generate_content(course_name:str , week_name:str , subtopic_name:str):
+    temp = generate_links(course_name, week_name, subtopic_name)
+    # print(temp.youtube_links)
+    print(temp)
+    return temp
+    # print(course_name, week_name, subtopic_name˚)
