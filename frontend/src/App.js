@@ -10,7 +10,7 @@ function App() {
     <UserProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<TopicPage />} />
+          <Route path="/home" element={<TopicPage />} />
           <Route path="/original-level" element={<OriginalLevelPage />} />
           <Route path="/initial-quiz" element={<InitialQuizPage />} />
         </Routes>
