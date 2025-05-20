@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routes.initialQuiz import router as quiz_router
 from app.routes.auth import router as auth_router
 import app.utils.database
 
@@ -13,6 +14,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(quiz_router)
 
 @app.get("/")
 def root():
