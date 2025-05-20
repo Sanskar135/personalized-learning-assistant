@@ -58,26 +58,29 @@ function InitialQuizPage() {
     e.preventDefault();
     const score = calculateScore();
     level = getDifficultyLevel(formData.knowledgeLevel);
+    let knowledgeLevel = 1;
     if(level == 1){
       if(score < 5){
-        setUserScore(2);
+        knowledgeLevel = 2;
       }
-      else setUserScore(3);
+      else knowledgeLevel = 3;
     }
     else if(level == 2){
       if(score < 5){
-        setUserScore(4);
+        knowledgeLevel = 4;
       }
-      else setUserScore(5);
+      else knowledgeLevel = 5;
     }
     else if(level == 3){
       if(score < 5){
-        setUserScore(6);
+        knowledgeLevel = 6;
       }
-      else setUserScore(7);
+      else knowledgeLevel = 7;
     }
     // setUserScore(score);
-    navigate('/roadmap');
+    localStorage.setItem('knowledgeLevel', knowledgeLevel);
+    
+    // navigate to roadmap page
   };
 
   if (loading) return <div className="loading">Loading quiz...</div>;

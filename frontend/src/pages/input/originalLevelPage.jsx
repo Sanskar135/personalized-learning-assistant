@@ -35,8 +35,13 @@ function OriginalLevelPage() {
     localStorage.setItem('difficultyLevel', getDifficultyLevel(formData.knowledgeLevel));
     level = getDifficultyLevel(formData.knowledgeLevel);
     if(level == 0) {
-      setUserScore(1);
+      let knowledgeLevel = 1;
+      localStorage.setItem('knowledgeLevel', knowledgeLevel);
+      // also store the weeks and hoursPerWeek
+      localStorage.setItem('weeks', formData.weeks);
+      localStorage.setItem('hours', formData.hoursPerWeek);
       // navigate to roadmap page
+
     }
     else {
       navigate('/initial-quiz');
