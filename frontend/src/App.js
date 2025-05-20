@@ -1,10 +1,50 @@
 import React from 'react';
+import Roadmap from './pages/roadmap';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { UserProvider } from './context/UserContext';
+import TopicPage from './pages/input/topicPage';
+import OriginalLevelPage from './pages/input/originalLevelPage';
+import InitialQuizPage from './pages/input/initialQuizPage';
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./pages/ProtectedRoute";
 
 function App() {
   return (
-    <div className="App">
-      <h1>Frontend is running!</h1>
-    </div>
+    <UserProvider>
+    <Router>
+      <Routes>
+        <Route path="/roadmap" element={<Roadmap />} />
+        <Route path="/" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <TopicPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/original-level"
+          element={
+            <ProtectedRoute>
+              <OriginalLevelPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/initial-quiz"
+          element={
+            <ProtectedRoute>
+              <InitialQuizPage />
+            </ProtectedRoute>
+          }
+        />         
+      </Routes>
+    </Router>
+</UserProvider>
   );
 }
 
