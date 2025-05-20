@@ -49,7 +49,7 @@ function InitialQuizPage() {
         score++;
       }
     });
-    console.log("score: ", score);
+    //console.log("score: ", score);
     return score;
   };
   
@@ -57,7 +57,26 @@ function InitialQuizPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const score = calculateScore();
-    setUserScore(score);
+    level = getDifficultyLevel(formData.knowledgeLevel);
+    if(level == 1){
+      if(score < 5){
+        setUserScore(2);
+      }
+      else setUserScore(3);
+    }
+    else if(level == 2){
+      if(score < 5){
+        setUserScore(4);
+      }
+      else setUserScore(5);
+    }
+    else if(level == 3){
+      if(score < 5){
+        setUserScore(6);
+      }
+      else setUserScore(7);
+    }
+    // setUserScore(score);
     navigate('/roadmap');
   };
 

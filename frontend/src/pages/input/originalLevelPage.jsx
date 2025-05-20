@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../context/UserContext';
 import './originalLevelPage.css';
 
 function OriginalLevelPage() {
+  const { setUserScore } = useUser();
   const [formData, setFormData] = useState({
     weeks: '',
     hoursPerWeek: '',
@@ -20,21 +22,24 @@ function OriginalLevelPage() {
 
   const getDifficultyLevel = (knowledgeLevel) => {
     switch(knowledgeLevel) {
+      case 'absolute beginner': return 0;
       case 'beginner': return 1;
       case 'intermediate': return 2;
       case 'expert': return 3;
-      default: return 1;
+      default: return 0;
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.knowledgeLevel !== 'absolute beginner') {
-      localStorage.setItem('difficultyLevel', getDifficultyLevel(formData.knowledgeLevel));
-      navigate('/initial-quiz');
+    localStorage.setItem('difficultyLevel', getDifficultyLevel(formData.knowledgeLevel));
+    level = getDifficultyLevel(formData.knowledgeLevel);
+    if(level == 0) {
+      setUserScore(1);
+      // navigate to roadmap page
     }
     else {
-      // Directly navigate to the roadmap page
+      navigate('/initial-quiz');
     }
   };
 
