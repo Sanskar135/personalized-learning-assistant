@@ -23,6 +23,8 @@ def generate_quiz(topic: str, difficulty: int):
     difficulty_map = {1: "basic", 2: "intermediate", 3: "advanced"}
     difficulty_desc = difficulty_map[difficulty]
 
+    print(difficulty)
+
     # Configure the generative model
     client = genai.GenerativeModel(
         model_name="gemini-1.5-flash",
@@ -48,7 +50,7 @@ def generate_quiz(topic: str, difficulty: int):
             contents=f"Generate a 10-question quiz on {topic} at {difficulty_desc} difficulty level.",
             generation_config={"response_mime_type": "application/json", "response_schema": Quiz},
         )
-        # print(response.text)
+        print(response.text)
         # Parse the response
         # return response.text
         json_text = response.text

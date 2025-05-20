@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Login.css"
+import "./Login.module.css"
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -19,20 +19,33 @@ function Login() {
     const data = await res.json();
     if (data.token) {
       localStorage.setItem("token", data.token);
-      navigate("/dashboard");  // ✅ Redirect
+      navigate("/home");  // ✅ Redirect
     } else {
       alert(data.detail || "Login failed");
     }
   };
 
   return (
-    <div className="form-container">
-      <h2>Login</h2>
-      <input name="email" placeholder="Email" onChange={handleChange} />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-      <button onClick={handleLogin}>Login</button>
+    <div className={styles.formContainer}>
+      <h2 className={styles.heading}>Login</h2>
+      <input
+        name="email"
+        placeholder="Email"
+        onChange={handleChange}
+        className={styles.input}
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        onChange={handleChange}
+        className={styles.input}
+      />
+      <button onClick={handleLogin} className={styles.button}>
+        Login
+      </button>
       <p style={{ marginTop: "10px" }}>
-        Don’t have an account?
+        Don't have an account?
         <Link to="/" style={{ color: "#4f46e5", marginLeft: "6px" }}>Register</Link>
       </p>
     </div>

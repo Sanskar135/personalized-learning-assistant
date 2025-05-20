@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import "./Register.css"
+import "./Register.module.css"
 
 function Register() {
   const [form, setForm] = useState({
@@ -26,23 +26,46 @@ function Register() {
     const data = await res.json();
     if (data.token) {
       localStorage.setItem("token", data.token);
-      navigate("/dashboard");  // ✅ Redirect
+      navigate("/home");  // ✅ Redirect
     } else {
       alert(data.detail || "Registration failed");
     }
   };
 
-  return (
-    <div className="form-container">
-      <h2>Register</h2>
-      <input name="first_name" placeholder="First Name" onChange={handleChange} />
-      <input name="last_name" placeholder="Last Name" onChange={handleChange} />
-      <input name="email" placeholder="Email" onChange={handleChange} />
-      <input type="password" name="password" placeholder="Password" onChange={handleChange} />
-      <button onClick={handleRegister}>Register</button>
-      <p style={{ marginTop: "10px" }}>
+   return (
+    <div className={styles.formContainer}>
+      <h2 className={styles.heading}>Register</h2>
+      <input
+        name="first_name"
+        placeholder="First Name"
+        onChange={handleChange}
+        className={styles.input}
+      />
+      <input
+        name="last_name"
+        placeholder="Last Name"
+        onChange={handleChange}
+        className={styles.input}
+      />
+      <input
+        name="email"
+        placeholder="Email"
+        onChange={handleChange}
+        className={styles.input}
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        onChange={handleChange}
+        className={styles.input}
+      />
+      <button onClick={handleRegister} className={styles.button}>
+        Register
+      </button>
+      <p style={{ marginTop: '10px' }}>
         Already have an account?
-        <Link to="/login" style={{ color: "#4f46e5", marginLeft: "6px" }}>Login</Link>
+        <Link to="/login" style={{ color: '#4f46e5', marginLeft: '6px' }}>Login</Link>
       </p>
     </div>
   );
