@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './roadmap.css'; // Import the CSS file
+
 function Roadmap() {
   const [roadmap, setRoadmap] = useState([]);
   const [expanded, setExpanded] = useState(null);
@@ -14,6 +15,10 @@ function Roadmap() {
     const knowledgeLevel = parseInt(localStorage.getItem("knowledgeLevel")) || 1;
     const weeks = parseInt(localStorage.getItem("weeks")) || 4;
     const hours = parseInt(localStorage.getItem("hours")) || 10;
+
+    console.log("here");
+    console.log(topic, knowledgeLevel, weeks, hours);
+
     const requestBody = {
       topic,
       knowledge_level: knowledgeLevel,
@@ -24,7 +29,7 @@ function Roadmap() {
 
     axios.post("http://localhost:8000/roadmap/generate", requestBody, {
       headers: {
-        //Authorization: `Bearer ${token}`,  // 🔐 Only if JWT required
+        // Authorization: `Bearer ${token}`,  // 🔐 Only if JWT required
         "Content-Type": "application/json"
       }
     })
@@ -64,7 +69,14 @@ function Roadmap() {
       });
   };
 
-  if (loading) return <div className="loading-text">Loading roadmap...</div>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <div className="loading-text">Generating your personalized roadmap...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="roadmap-container">
