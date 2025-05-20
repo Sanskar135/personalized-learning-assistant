@@ -52,35 +52,25 @@ function InitialQuizPage() {
     //console.log("score: ", score);
     return score;
   };
-  
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const score = calculateScore();
-    level = getDifficultyLevel(formData.knowledgeLevel);
+    console.log("score: ", score);  
+    // formData is not defined
+    const level = parseInt(localStorage.getItem('knowledgeLevel'));
     let knowledgeLevel = 1;
-    if(level == 1){
-      if(score < 5){
-        knowledgeLevel = 2;
-      }
-      else knowledgeLevel = 3;
-    }
-    else if(level == 2){
-      if(score < 5){
-        knowledgeLevel = 4;
-      }
-      else knowledgeLevel = 5;
-    }
-    else if(level == 3){
-      if(score < 5){
-        knowledgeLevel = 6;
-      }
-      else knowledgeLevel = 7;
+    if (level === 1) {
+      knowledgeLevel = score < 5 ? 2 : 3;
+    } else if (level === 2) {
+      knowledgeLevel = score < 5 ? 4 : 5;
+    } else if (level === 3) {
+      knowledgeLevel = score < 5 ? 6 : 7;
     }
     // setUserScore(score);
     localStorage.setItem('knowledgeLevel', knowledgeLevel);
-    
     // navigate to roadmap page
+    navigate('/roadmap');
   };
 
   if (loading) return <div className="loading">Loading quiz...</div>;
