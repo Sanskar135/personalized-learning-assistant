@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Login.module.css"
+import styles from "./Login.module.css"
 
 function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -26,6 +26,7 @@ function Login() {
   };
 
   return (
+    <div className={styles.pageContainer}>
     <div className={styles.formContainer}>
       <h2 className={styles.heading}>Login</h2>
       <input
@@ -48,6 +49,7 @@ function Login() {
         Don't have an account?
         <Link to="/" style={{ color: "#4f46e5", marginLeft: "6px" }}>Register</Link>
       </p>
+    </div>
     </div>
   );
 }

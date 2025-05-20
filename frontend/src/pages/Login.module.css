@@ -1,12 +1,19 @@
+.pageContainer {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #e0eafc, #cfdef3);
+}
+
 .formContainer {
-  background-color: #ffffff;
+  background-color: white;
   padding: 30px 40px;
   border-radius: 15px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
   text-align: center;
-  margin: auto;
 }
 
 .heading {
@@ -18,10 +25,10 @@
   width: 100%;
   padding: 12px;
   margin-bottom: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 14px;
-  transition: all 0.3s ease;
+  transition: border 0.3s;
 }
 
 .input:focus {
@@ -33,16 +40,16 @@
 .button {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(to right, #6a5af9, #8e6ef1);
+  background-color: #4f46e5;
   color: white;
   border: none;
   border-radius: 10px;
-  font-weight: 600;
+  font-weight: bold;
   font-size: 16px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s;
 }
 
 .button:hover {
-  background: linear-gradient(to right, #5a4df3, #7c5dee);
+  background-color: #4338ca;
 }

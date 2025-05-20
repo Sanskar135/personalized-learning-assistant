@@ -1,3 +1,11 @@
+.pageContainer {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #e0eafc, #cfdef3);
+}
+
 .formContainer {
   background-color: white;
   padding: 30px 40px;
@@ -6,7 +14,6 @@
   width: 100%;
   max-width: 400px;
   text-align: center;
-  margin: auto;
 }
 
 .heading {

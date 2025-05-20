@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import "./Register.module.css"
+import styles from "./Register.module.css"
 
 function Register() {
   const [form, setForm] = useState({
@@ -33,6 +33,7 @@ function Register() {
   };
 
    return (
+    <div className={styles.pageContainer}>
     <div className={styles.formContainer}>
       <h2 className={styles.heading}>Register</h2>
       <input
@@ -67,6 +68,7 @@ function Register() {
         Already have an account?
         <Link to="/login" style={{ color: '#4f46e5', marginLeft: '6px' }}>Login</Link>
       </p>
+    </div>
     </div>
   );
 }
