@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './roadmap.css'; // Import the CSS file
-
 function Roadmap() {
   const [roadmap, setRoadmap] = useState([]);
   const [expanded, setExpanded] = useState(null);
@@ -11,15 +10,32 @@ function Roadmap() {
   const [errorSubtopic, setErrorSubtopic] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/roadmap")
-      .then(response => {
-        setRoadmap(response.data.response);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error("Failed to fetch roadmap:", error);
-        setLoading(false);
-      });
+    const topic = localStorage.getItem("selectedTopic");
+    const knowledgeLevel = parseInt(localStorage.getItem("knowledgeLevel")) || 1;
+    const weeks = parseInt(localStorage.getItem("weeks")) || 4;
+    const hours = parseInt(localStorage.getItem("hours")) || 10;
+    const requestBody = {
+      topic,
+      knowledge_level: knowledgeLevel,
+      weeks,
+      hours,
+      known_subtopics: [], // optionally populate if needed
+    };
+
+    axios.post("http://localhost:8000/roadmap/generate", requestBody, {
+      headers: {
+        //Authorization: `Bearer ${token}`,  // 🔐 Only if JWT required
+        "Content-Type": "application/json"
+      }
+    })
+    .then(response => {
+      setRoadmap(response.data.response);
+      setLoading(false);
+    })
+    .catch(error => {
+      console.error("Failed to generate roadmap:", error.response?.data || error.message);
+      setLoading(false);
+    });
   }, []);
 
   const toggleDropdown = (index) => {
