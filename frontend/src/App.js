@@ -1,5 +1,6 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from 'react';
+import Roadmap from './pages/roadmap';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { UserProvider } from './context/UserContext';
 import TopicPage from './pages/input/topicPage';
 import OriginalLevelPage from './pages/input/originalLevelPage';
@@ -14,6 +15,7 @@ function App() {
     <UserProvider>
     <Router>
       <Routes>
+        <Route path="/roadmap" element={<Roadmap />} />
         <Route path="/" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route
