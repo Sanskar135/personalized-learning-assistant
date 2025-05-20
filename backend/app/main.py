@@ -8,19 +8,8 @@ from mongoengine import connect
 connect(
         db='User',          # name of your MongoDB database
         host='localhost',          # or your MongoDB URI
-        port=27017
+        port=27017,  # default MongoDB port
     )
-# dummy = User(
-#     firstname="John",
-#     lastname="Doe",
-#     email="m@gmail.com",
-#     password="password123",
-#     last_login_time=None,
-#     course_list=[]
-# )
-# dummy.save(timeout=False)
-
-
 
 app = FastAPI()
 
