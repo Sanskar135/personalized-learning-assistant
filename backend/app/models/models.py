@@ -54,3 +54,4 @@ class User(Document):
     courses = ListField(ReferenceField(Course))
 
     meta = {'collection': 'users'}
+

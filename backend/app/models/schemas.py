@@ -21,4 +21,3 @@ class UserOut(BaseModel):
 class TokenResponse(BaseModel):
     token: str
     token_type: str = "bearer"
-    
